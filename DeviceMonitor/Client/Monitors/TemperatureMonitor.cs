@@ -1,5 +1,3 @@
-using System.Management;
-
 namespace ClientPublishers.Monitors;
 
 public sealed class TemperatureMonitor : Monitor

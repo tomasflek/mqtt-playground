@@ -3,7 +3,7 @@ using ClientPublishers.Monitors;
 
 namespace ClientPublishers.Factories;
 
-public class MonitorFactory
+public static class MonitorFactory
 {
     public static IMonitor? CreateMonitor(MonitorType type)
     {

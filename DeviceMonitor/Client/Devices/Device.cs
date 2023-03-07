@@ -1,7 +1,6 @@
 ﻿using ClientPublishers.Events;
 using ClientPublishers.Factories;
 using ClientPublishers.Interfaces;
-using ClientPublishers.Monitors;
 using MQTTnet;
 using MQTTnet.Client;
 

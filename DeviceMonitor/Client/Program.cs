@@ -1,5 +1,4 @@
 ﻿using ClientPublishers.Devices;
-using MQTTnet.Client;
 
 namespace ClientPublishers
 {
@@ -7,8 +6,12 @@ namespace ClientPublishers
 	{
 		static async Task Main(string[] args)
 		{
-			var client = new XiaomiWallSocket("testClient", "localhost");
-			await client.ConnectAsync();
+			var xiaomi = new XiaomiWallSocketDevice($"Xiaomi_{Guid.NewGuid()}");
+			await xiaomi.ConnectAsync();
+			
+			var pc = new PcDevice($"Dell_{Guid.NewGuid()}");
+			await pc.ConnectAsync();
+			
 			Console.ReadLine();
 		}
 	}

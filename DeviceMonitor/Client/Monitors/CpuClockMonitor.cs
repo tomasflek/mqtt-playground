@@ -1,4 +1,5 @@
 using System.Management;
+using Common;
 
 namespace ClientPublishers.Monitors;
 
@@ -22,7 +23,16 @@ public sealed class CpuClockMonitor : Monitor
         try
         {
             using ManagementObject managementObject = new ManagementObject("Win32_Processor.DeviceID='CPU0'");
-            return managementObject["CurrentClockSpeed"].ToString();
+            var frequency = managementObject["CurrentClockSpeed"].ToString();
+            var unit = "MHz";
+
+            var dto = new FrequencyDto()
+            {
+                Frequency = frequency,
+                Unit = unit
+            };
+            
+            return frequency.SerializeToJson();
         }
         catch (Exception e)
         {
