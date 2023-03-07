@@ -5,4 +5,11 @@
 		Thermometer,
 		Barometer
 	}
+	
+	public enum MonitorType
+	{
+		CpuClock,
+		Temperature,
+		PowerConsuption
+	}
 }

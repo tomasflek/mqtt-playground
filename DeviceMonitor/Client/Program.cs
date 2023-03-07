@@ -1,6 +1,5 @@
-﻿using ClientPublishers.Clients;
-using System.Diagnostics;
-using System.Linq;
+﻿using ClientPublishers.Devices;
+using MQTTnet.Client;
 
 namespace ClientPublishers
 {
@@ -8,9 +7,9 @@ namespace ClientPublishers
 	{
 		static async Task Main(string[] args)
 		{
-			var clientSimulator = new ClientSimulator();
-			clientSimulator.CreateClients();
-			await clientSimulator.RunAsync();
+			var client = new XiaomiWallSocket("testClient", "localhost");
+			await client.ConnectAsync();
+			Console.ReadLine();
 		}
 	}
 }
