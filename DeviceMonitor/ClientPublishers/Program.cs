@@ -27,6 +27,7 @@ namespace ClientPublishers
         {
             foreach (var device in clients)
             {
+                Console.WriteLine($"Connecting client/device {device.ClientName}");
                 await device.ConnectAsync();
             }
         }
