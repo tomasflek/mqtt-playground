@@ -21,4 +21,6 @@ public interface IClient
     /// <param name="payload">MQTT data payload.</param>
     /// <returns></returns>
     public Task PublishMessageAsync(string topic, string payload);
+
+    string ClientName { get; }
 }

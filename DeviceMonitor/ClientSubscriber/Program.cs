@@ -98,7 +98,6 @@ namespace ClientSubscriber
                 Console.Clear();
                 lock (locking)
                 {
-                    ulong numberOfMonitorHit = 0;
                     Console.Clear();
                     lock (locking)
                     {

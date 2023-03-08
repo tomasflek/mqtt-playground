@@ -22,27 +22,16 @@ public static class Factory
             MonitorType.CpuClock => new CpuClockMonitor(deviceName),
             MonitorType.Temperature => new TemperatureMonitor(deviceName),
             MonitorType.PowerConsumption => new PowerConsumptionMonitor(deviceName),
-            _ => null
+            _ => throw new ArgumentOutOfRangeException(nameof(deviceName), deviceName, null) 
         };
     }
-    
+
     /// <summary>
     /// Creates a device (MQTT client) with predefined monitors.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static IClient? CreateDevice(DeviceType deviceType)
     {
-        switch (deviceType)
-        {
-            case DeviceType.XiaomiWallSocket:
-                break;
-            case DeviceType.Pc:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
-        }
-
         return deviceType switch
         {
             DeviceType.XiaomiWallSocket => CreateXiaomiDevice(),

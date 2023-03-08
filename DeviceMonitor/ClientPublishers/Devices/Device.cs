@@ -20,6 +20,7 @@ public sealed class Device : IClient, IDisposable
 	#region Properties
 	
 	private readonly IPublishBehaviour _publishBehaviour;
+	public string ClientName { get; }
 
 	#endregion
 
@@ -27,6 +28,8 @@ public sealed class Device : IClient, IDisposable
 
 	public Device(string clientId, string serverAddress, IPublishBehaviour publishBehaviour)
 	{
+		ClientName = clientId;
+		
 		var mqttFactory = new MqttFactory();
 		_mqttClient = mqttFactory.CreateMqttClient();
 		_mqttClientOptions = new MqttClientOptionsBuilder()
@@ -48,7 +51,6 @@ public sealed class Device : IClient, IDisposable
 	{
 		await _mqttClient.ConnectAsync(_mqttClientOptions, CancellationToken.None);
 		_publishBehaviour.OnConnect();
-
 	}
 
 	/// <summary>

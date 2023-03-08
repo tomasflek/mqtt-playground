@@ -4,7 +4,7 @@
 	{
 		CpuClock,
 		Temperature,
-		PowerConsumption
+		PowerConsumption,
 	}
 
 	public enum DeviceType

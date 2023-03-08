@@ -18,7 +18,7 @@ public sealed class CpuClockMonitor : Monitor
     public CpuClockMonitor(string deviceName) : base(PerformReadingAsync, 1, deviceName) { }
     #endregion
 
-    #region Public methods
+    #region Private methods
 
     private static string? PerformReadingAsync()
     {

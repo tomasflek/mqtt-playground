@@ -6,7 +6,7 @@ namespace ClientPublishers.Devices;
 /// <summary>
 /// Behaviour class which gathers a measurement data from all monitors and published the information to subscribers.
 /// </summary>
-public class PublishBehaviour : IPublishBehaviour
+public sealed class PublishBehaviour : IPublishBehaviour
 {
     #region Events
 

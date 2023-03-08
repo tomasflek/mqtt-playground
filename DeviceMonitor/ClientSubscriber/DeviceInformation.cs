@@ -1,16 +1,13 @@
 namespace ClientSubscriber;
 
-internal static partial class Program
+internal sealed class DeviceInformation
 {
-    private class DeviceInformation
-    {
-        public string DeviceName { get; }
-        public Dictionary<string, MonitorInformation> MonitorsMeasurementDict { get; }
+    public string DeviceName { get; }
+    public Dictionary<string, MonitorInformation> MonitorsMeasurementDict { get; }
 
-        public DeviceInformation(string deviceName)
-        {
-            MonitorsMeasurementDict = new Dictionary<string, MonitorInformation>();
-            DeviceName = deviceName;
-        }
+    public DeviceInformation(string deviceName)
+    {
+        MonitorsMeasurementDict = new Dictionary<string, MonitorInformation>();
+        DeviceName = deviceName;
     }
 }
