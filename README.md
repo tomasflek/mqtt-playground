@@ -27,7 +27,7 @@ The client is not deserializing payloads, that would be for further implementati
 In order to build the solution .NET 6 DEV must be installed. The projects are using external nuget packages, make sure that all nuget packages are restored prior to building.
 In order to restore nuget packages, execute the command `dotnet restore`.
 
-# How to run it
+# How to run
 Run all application on the same computer - by default the `localhost` is used as a server address.
 1. Run `MqttBroker.exe` Console will display counter measurements for received messages. In order to debug the communication run `MqttBroker.exe debug`.
 2. Run `ClientPublishers.exe x`, where x is the number of devices (clients) that will be automatically created. 
