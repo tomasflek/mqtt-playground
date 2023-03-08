@@ -29,8 +29,7 @@ The client is not desirializing payloads, that would be for further implementati
 In order to buid the solution .NET 6 DEV must be installed. The projects are using external nuget packages, make sure that all nuget packages are restored prior building.
 In order to restore nuget packages, execute command `dotnet restore`.
 
-# How to runt it
-1. Make sure that all projects are successfully built.
-2. Run `MqttBroker.exe` Console will display counter measurement for received messages. In order to debug the communication run `MqttBroker.exe debug`.
-3. Run `ClientPublishers.exe x`, where x is the number of devices (clients) which will be automatically created. 
-4. Optionaly: run `ClientSubscriber.exe` or `ClientSubscriber.exe detail` if you want to see more information about devices and monitors.
+# How to run it
+1. Run `MqttBroker.exe` Console will display counter measurement for received messages. In order to debug the communication run `MqttBroker.exe debug`.
+2. Run `ClientPublishers.exe x`, where x is the number of devices (clients) which will be automatically created. 
+3. Optionaly: Run `ClientSubscriber.exe` or `ClientSubscriber.exe detail` if you want to see more information about devices and monitors.
