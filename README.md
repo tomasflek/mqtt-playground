@@ -34,6 +34,7 @@ Run all application on the same computer - by default the `localhost` is used as
 3. Optionally: Run `ClientSubscriber.exe` or `ClientSubscriber.exe detail` if you want to see more information about devices and monitors.
 4. Optionally: Run [MQTT explorer](http://mqtt-explorer.com/).
 
-# What is not yet covered
+# What is not yet covered and what could be improved
 - payload is serialized into json, transferred, but not read
 - only very basic unit tests are covered, some integration tests are missing due to lack of time
+- use IoC and DI to decide whether to log messages into console or to file - Serilog, Log4Net, etc ...
