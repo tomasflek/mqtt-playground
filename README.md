@@ -27,6 +27,7 @@ The client is not desirializing payloads, that would be for further implementati
 
 # How to build
 In order to buid the solution .NET 6 DEV must be installed. The projects are using external nuget packages, make sure that all nuget packages are restored prior building.
+In order to restore nuget packages, execute command `dotnet restore`.
 
 # How to runt it
 1. Make sure that all projects are successfully built.
