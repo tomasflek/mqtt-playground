@@ -16,21 +16,20 @@ namespace ClientSubscriber
             ParseArguments(args);
 
             var mqttFactory = new MqttFactory();
-            using (var mqttClient = mqttFactory.CreateMqttClient())
-            {
-                mqttClient.ApplicationMessageReceivedAsync += MqttClientOnApplicationMessageReceivedAsync;
-                
-                var options = new MqttClientOptionsBuilder()
-                    .WithTcpServer("localhost")
-                    .WithClientId("MonitoringSubscriber")
-                    .Build();
-                await mqttClient.ConnectAsync(options);
+            using var mqttClient = mqttFactory.CreateMqttClient();
 
-                var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
-                    .WithTopicFilter(f => { f.WithTopic("monitor/+/+"); })
-                    .Build();
-                await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
-            }
+            var options = new MqttClientOptionsBuilder()
+                .WithTcpServer("localhost")
+                .WithClientId("MonitoringSubscriber")
+                .Build();
+
+            var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
+                .WithTopicFilter(f => { f.WithTopic("monitor/+/+"); })
+                .Build();
+
+            mqttClient.ApplicationMessageReceivedAsync += MqttClientOnApplicationMessageReceivedAsync;
+            await mqttClient.ConnectAsync(options);
+            await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
 
             if (_detailed)
             {

@@ -9,7 +9,15 @@ namespace ClientPublishers
 
         static async Task Main(string[] args)
         {
-            _numberOfDevices = int.Parse(args[0]);
+            try
+            {
+                _numberOfDevices = int.Parse(args[0]);
+            }
+            catch (Exception e)
+            {
+                _numberOfDevices = 500;
+            }
+            
             var devices = CreateClients();
             await ConnectClients(devices);
             Console.ReadLine();
