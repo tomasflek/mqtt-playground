@@ -49,7 +49,7 @@ public static class Factory
 
         IClient? CreateXiaomiDevice()
         {
-            var clientId = $"Xiaomi{Guid.NewGuid()}";
+            var clientId = $"Xiaomi_{Guid.NewGuid()}";
             var monitorBehaviour = new PublishMeasurement(clientId,MonitorType.Temperature, MonitorType.PowerConsumption);
             var device = new Device(clientId, "localhost", monitorBehaviour);
             return device;

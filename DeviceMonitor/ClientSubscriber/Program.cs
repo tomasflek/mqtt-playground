@@ -5,7 +5,7 @@ using MQTTnet.Client;
 
 namespace ClientSubscriber
 {
-    internal static partial class Program
+    internal static class Program
     {
         private static readonly Dictionary<string, DeviceInformation> _devicesInfoDict = new();
         private static readonly object locking = new();
@@ -14,7 +14,23 @@ namespace ClientSubscriber
         static async Task Main(string[] args)
         {
             ParseArguments(args);
-            await SetupMqttClient();
+
+            var mqttFactory = new MqttFactory();
+            using (var mqttClient = mqttFactory.CreateMqttClient())
+            {
+                mqttClient.ApplicationMessageReceivedAsync += MqttClientOnApplicationMessageReceivedAsync;
+                
+                var options = new MqttClientOptionsBuilder()
+                    .WithTcpServer("localhost")
+                    .WithClientId("MonitoringSubscriber")
+                    .Build();
+                await mqttClient.ConnectAsync(options);
+
+                var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
+                    .WithTopicFilter(f => { f.WithTopic("monitor/+/+"); })
+                    .Build();
+                await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
+            }
 
             if (_detailed)
             {
@@ -27,25 +43,7 @@ namespace ClientSubscriber
 
             Console.ReadLine();
         }
-
-        private static async Task SetupMqttClient()
-        {
-            var mqttFactory = new MqttFactory();
-            using var mqttClient = mqttFactory.CreateMqttClient();
-            var options = new MqttClientOptionsBuilder()
-                .WithTcpServer("localhost")
-                .WithClientId("MonitoringSubscriber")
-                .Build();
-
-            var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
-                .WithTopicFilter(f => { f.WithTopic("monitor/+/+"); })
-                .Build();
-
-            mqttClient.ApplicationMessageReceivedAsync += MqttClientOnApplicationMessageReceivedAsync;
-            await mqttClient.ConnectAsync(options);
-            await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
-        }
-
+        
         private static void ParseArguments(string[] args)
         {
             _detailed = args.Contains("detail");
@@ -91,6 +89,9 @@ namespace ClientSubscriber
             }
         }
 
+        /// <summary>
+        /// Writes only summary information about counted events.
+        /// </summary>
         private static async Task UpdateConsoleSummary()
         {
             while (true)
@@ -111,6 +112,9 @@ namespace ClientSubscriber
             }
         }
 
+        /// <summary>
+        /// Writes information about all monitors.
+        /// </summary>
         private static async Task UpdateConsoleDetailed()
         {
             while (true)
