@@ -7,13 +7,13 @@ public sealed class CpuClockMonitor : Monitor
 {
     #region Properties
 
-    protected override string Topic => $"monitor/{typeof(CpuClockMonitor)}";
+    protected override string Topic => $"monitor/{DeviceName}/{nameof(CpuClockMonitor)}";
 
     #endregion
 
     #region Constructor
 
-    public CpuClockMonitor() : base(PerformReadingAsync, 4) { }
+    public CpuClockMonitor(string deviceName) : base(PerformReadingAsync, 1, deviceName) { }
     #endregion
 
     #region Public methods

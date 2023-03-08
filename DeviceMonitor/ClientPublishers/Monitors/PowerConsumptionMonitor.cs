@@ -4,13 +4,13 @@ public sealed class PowerConsumptionMonitor : Monitor
 {
     #region Properties
 
-    protected override string Topic => $"monitor/{typeof(PowerConsumptionMonitor)}";
+    protected override string Topic => $"monitor/{DeviceName}/{nameof(PowerConsumptionMonitor)}";
 
     #endregion
 
     #region Constructor
 
-    public PowerConsumptionMonitor() : base(PerformReadingAsync, 30) { }
+    public PowerConsumptionMonitor(string deviceName) : base(PerformReadingAsync, 1, deviceName) { }
     #endregion
 
     #region Public methods

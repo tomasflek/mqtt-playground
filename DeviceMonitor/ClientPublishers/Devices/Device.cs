@@ -6,6 +6,13 @@ using MQTTnet.Client;
 
 namespace ClientPublishers.Devices;
 
+public interface IPublishBehaviour
+{
+	void OnConnect();
+	void OnDisconnect();
+	event PublishBehaviour.AsyncEventHandler<MeasureEventArgs>? OnMeasured;
+}
+
 public abstract class Device : IClient, IDisposable
 {
 	#region Fields
@@ -16,14 +23,14 @@ public abstract class Device : IClient, IDisposable
 	#endregion
 
 	#region Properties
-
-	private readonly List<IMonitor> _monitors = new();
+	
+	private readonly IPublishBehaviour _publishBehaviour;
 
 	#endregion
 
 	#region Constructor
 
-	protected Device(string clientId, string serverAddress = "localhost", params MonitorType[] monitors)
+	protected Device(string clientId, string serverAddress, IPublishBehaviour publishBehaviour)
 	{
 		var mqttFactory = new MqttFactory();
 		_mqttClient = mqttFactory.CreateMqttClient();
@@ -31,22 +38,10 @@ public abstract class Device : IClient, IDisposable
 			.WithTcpServer(serverAddress)
 			.WithClientId(clientId)
 			.Build();
-
-		foreach (var monitorType in monitors)
-		{
-			var monitor = MonitorFactory.CreateMonitor(monitorType);
-			if (monitor is null)
-				continue;
-			
-			_monitors.Add(monitor);
-		}
+		
+		_publishBehaviour = publishBehaviour;
+		_publishBehaviour.OnMeasured += OnPublish;
 	}
-
-	private async Task OnMeasuredProcessing(MeasureEventArgs e)
-	{
-		await PublishMessageAsync(e.Topic, e.Payload ?? string.Empty);
-	}
-
 	#endregion
 	
 	#region Public methods
@@ -54,29 +49,14 @@ public abstract class Device : IClient, IDisposable
 	public async Task ConnectAsync()
 	{
 		await _mqttClient.ConnectAsync(_mqttClientOptions, CancellationToken.None);
-		SubscribeToMonitorEvents();
-	}
+		_publishBehaviour.OnConnect();
 
-	private void SubscribeToMonitorEvents()
-	{
-		foreach (var monitor in _monitors)
-		{
-			monitor.OnMeasured += OnMeasuredProcessing;
-		}
 	}
 
 	public async Task DisconnectAsync()
 	{
 		await _mqttClient.DisconnectAsync();
-		UnsubscribeFromMonitorEvents();
-	}
-
-	private void UnsubscribeFromMonitorEvents()
-	{
-		foreach (var monitor in _monitors)
-		{
-			monitor.OnMeasured -= OnMeasuredProcessing;
-		}
+		_publishBehaviour.OnDisconnect();
 	}
 
 	public async Task PublishMessageAsync(string topic, string payload)
@@ -87,6 +67,11 @@ public abstract class Device : IClient, IDisposable
 			.Build();
 
 		await _mqttClient.PublishAsync(applicationMessage, CancellationToken.None);
+	}
+	
+	private async Task OnPublish(MeasureEventArgs e)
+	{
+		await PublishMessageAsync(e.Topic, e.Payload ?? String.Empty);
 	}
 	
 	#endregion

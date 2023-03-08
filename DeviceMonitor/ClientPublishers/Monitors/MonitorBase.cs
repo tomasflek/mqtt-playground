@@ -5,15 +5,16 @@ namespace ClientPublishers.Monitors;
 
 public abstract class Monitor : IMonitor
 {
+    protected string DeviceName { get; }
     protected abstract string Topic { get; }
-    public delegate void MeasureUpdateHandler(MeasureEventArgs e);
 
     public delegate Task AsyncEventHandler<in TMeasureEventArgs>(TMeasureEventArgs e);
     public event AsyncEventHandler<MeasureEventArgs>? OnMeasured;
     
 
-    protected Monitor(Func<string?>? measurementFunction, int measurementInterval)
+    protected Monitor(Func<string?>? measurementFunction, int measurementInterval, string deviceName)
     {
+        DeviceName = deviceName;
         if (measurementFunction is null)
             return;
         

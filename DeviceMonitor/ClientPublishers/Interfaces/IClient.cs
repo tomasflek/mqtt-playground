@@ -1,6 +1,6 @@
 ﻿namespace ClientPublishers.Interfaces;
 
-internal interface IClient
+public interface IClient
 {
     public Task ConnectAsync();
     public Task DisconnectAsync();

@@ -1,30 +1,89 @@
 ﻿using MQTTnet;
+using MQTTnet.Internal;
+using MQTTnet.Packets;
 using MQTTnet.Server;
 
 namespace MqttBroker // Note: actual namespace depends on the project name.
 {
-	internal class MqttServer
-	{
-		static async Task Main(string[] args)
-		{
-			await RunServer();
-		}
+    internal static class MqttServer
+    {
+        private static readonly Dictionary<string, ulong> _messagesDict = new();
+        private static readonly object locking = new();
 
-		public static async Task RunServer()
-		{
-			var mqttFactory = new MqttFactory(new ConsoleLogger());
-			var mqttServerOptions = new MqttServerOptionsBuilder().WithDefaultEndpoint().Build();
+        static async Task Main()
+        {
+            await RunServer();
+        }
 
-			using (var mqttServer = mqttFactory.CreateMqttServer(mqttServerOptions))
-			{
-				await mqttServer.StartAsync();
+        private static async Task RunServer()
+        {
+           
+            // var mqttFactory = new MqttFactory(new ConsoleLogger());
+            var mqttFactory = new MqttFactory();
+            var mqttServerOptions = new MqttServerOptionsBuilder()
+                .WithDefaultEndpoint()
+                .Build();
 
-				Console.WriteLine("Press Enter to exit.");
-				Console.ReadLine();
+            using var mqttServer = mqttFactory.CreateMqttServer(mqttServerOptions);
+            mqttServer.InterceptingInboundPacketAsync += InboundPacket;
+            await mqttServer.StartAsync();
+            
+            await Task.Run(UpdateConsole);
+            Console.WriteLine("Press Enter to exit.");
+            Console.ReadLine();
 
-				// Stop and dispose the MQTT server if it is no longer needed!
-				await mqttServer.StopAsync();
-			}
-		}
-	}
+            // Stop and dispose the MQTT server if it is no longer needed!
+            await mqttServer.StopAsync();
+        }
+
+        private static async Task UpdateConsole()
+        {
+            while (true)
+            {
+                Console.Clear();
+                lock (locking)
+                {
+                    foreach (var message in _messagesDict)
+                    {
+                        Console.WriteLine($"{message.Key} - {message.Value}");
+                    }
+
+                    Console.WriteLine($"Total count: {_messagesDict.Count}");
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(3));
+            }
+        }
+
+        private static Task InboundPacket(InterceptingPacketEventArgs arg)
+        {
+            if (arg.Packet is not MqttPublishPacket packet)
+                return CompletedTask.Instance;
+
+            var topic = packet.Topic;
+
+            var topicArray = topic.Split('/');
+            if (topicArray.Length < 3)
+                return Task.CompletedTask;
+
+            var deviceName = topicArray[1];
+            var monitorName = topicArray[2];
+
+            var dictKey = $"{deviceName}/{monitorName}";
+
+            lock (locking)
+            {
+                if (_messagesDict.TryGetValue(dictKey, out var counter))
+                {
+                    _messagesDict[dictKey] = counter + 1;
+                }
+                else
+                {
+                    _messagesDict[dictKey] = 1;
+                }
+            }
+
+            return CompletedTask.Instance;
+        }
+    }
 }
