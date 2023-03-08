@@ -4,7 +4,7 @@ namespace ClientPublishers
 {
 	internal class Program
 	{
-		static async Task Main(string[] args)
+		static async Task Main()
 		{
 			var xiaomi = new XiaomiWallSocketDevice($"Xiaomi_{Guid.NewGuid()}");
 			await xiaomi.ConnectAsync();

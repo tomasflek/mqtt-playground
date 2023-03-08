@@ -17,13 +17,13 @@ public abstract class Device : IClient, IDisposable
 
 	#region Properties
 
-	private List<IMonitor> _monitors = new();
+	private readonly List<IMonitor> _monitors = new();
 
 	#endregion
 
 	#region Constructor
 
-	public Device(string clientId, string serverAddress = "localhost", params MonitorType[] monitors)
+	protected Device(string clientId, string serverAddress = "localhost", params MonitorType[] monitors)
 	{
 		var mqttFactory = new MqttFactory();
 		_mqttClient = mqttFactory.CreateMqttClient();
@@ -109,6 +109,4 @@ public abstract class Device : IClient, IDisposable
 	}
 
 	#endregion
-
-
 }
