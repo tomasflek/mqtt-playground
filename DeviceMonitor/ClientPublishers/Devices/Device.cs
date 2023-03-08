@@ -5,7 +5,10 @@ using MQTTnet.Client;
 
 namespace ClientPublishers.Devices;
 
-public abstract class Device : IClient, IDisposable
+/// <summary>
+/// Base class for devices. The class is encapsulating MQTT client.
+/// </summary>
+public sealed class Device : IClient, IDisposable
 {
 	#region Fields
 
@@ -22,7 +25,7 @@ public abstract class Device : IClient, IDisposable
 
 	#region Constructor
 
-	protected Device(string clientId, string serverAddress, IPublishBehaviour publishBehaviour)
+	public Device(string clientId, string serverAddress, IPublishBehaviour publishBehaviour)
 	{
 		var mqttFactory = new MqttFactory();
 		_mqttClient = mqttFactory.CreateMqttClient();
@@ -38,6 +41,9 @@ public abstract class Device : IClient, IDisposable
 	
 	#region Public methods
 
+	/// <summary>
+	/// Connect to MQTT server and inform publishing behaviour about connecting.
+	/// </summary>
 	public async Task ConnectAsync()
 	{
 		await _mqttClient.ConnectAsync(_mqttClientOptions, CancellationToken.None);
@@ -45,12 +51,20 @@ public abstract class Device : IClient, IDisposable
 
 	}
 
+	/// <summary>
+	/// Disconnect from MQTT server and inform publishing behaviour about disconnectiong.
+	/// </summary>
 	public async Task DisconnectAsync()
 	{
 		await _mqttClient.DisconnectAsync();
 		_publishBehaviour.OnDisconnect();
 	}
 
+	/// <summary>
+	/// Publish MQTT message.
+	/// </summary>
+	/// <param name="topic">MQTT topic identifier.</param>
+	/// <param name="payload">MQTT data payload.</param>
 	public async Task PublishMessageAsync(string topic, string payload)
 	{
 		var applicationMessage = new MqttApplicationMessageBuilder()
@@ -61,6 +75,10 @@ public abstract class Device : IClient, IDisposable
 		await _mqttClient.PublishAsync(applicationMessage, CancellationToken.None);
 	}
 	
+	/// <summary>
+	/// On publish event.
+	/// </summary>
+	/// <param name="e">Measure evenat data.</param>
 	private async Task OnPublish(MeasureEventArgs e)
 	{
 		await PublishMessageAsync(e.Topic, e.Payload ?? String.Empty);

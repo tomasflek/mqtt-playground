@@ -10,25 +10,14 @@ namespace MqttBroker
 
 		public void Publish(MqttNetLogLevel logLevel, string source, string message, object[]? parameters, Exception? exception)
 		{
-			var foregroundColor = ConsoleColor.White;
-			switch (logLevel)
+			var foregroundColor = logLevel switch
 			{
-				case MqttNetLogLevel.Verbose:
-					foregroundColor = ConsoleColor.White;
-					break;
-
-				case MqttNetLogLevel.Info:
-					foregroundColor = ConsoleColor.Green;
-					break;
-
-				case MqttNetLogLevel.Warning:
-					foregroundColor = ConsoleColor.DarkYellow;
-					break;
-
-				case MqttNetLogLevel.Error:
-					foregroundColor = ConsoleColor.Red;
-					break;
-			}
+				MqttNetLogLevel.Verbose => ConsoleColor.White,
+				MqttNetLogLevel.Info => ConsoleColor.Green,
+				MqttNetLogLevel.Warning => ConsoleColor.DarkYellow,
+				MqttNetLogLevel.Error => ConsoleColor.Red,
+				_ => ConsoleColor.White
+			};
 
 			if (parameters?.Length > 0)
 			{

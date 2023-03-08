@@ -1,6 +1,6 @@
-namespace Common;
+namespace Common.Extensions;
 
-public class MqttExtension
+public static class MqttExtensions
 {
     public static bool ParseTopic(string topic, out string deviceName, out string monitorName)
     {

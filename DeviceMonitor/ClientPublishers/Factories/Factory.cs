@@ -4,36 +4,66 @@ using ClientPublishers.Monitors;
 
 namespace ClientPublishers.Factories;
 
+/// <summary>
+/// Factory methods for creating clients (devices) nad monitors.
+/// </summary>
 public static class Factory
 {
+    /// <summary>
+    /// Creates a monitor which is able to gather predefined measurement data.
+    /// </summary>
+    /// <param name="type">Monitor type.</param>
+    /// <param name="deviceName">Unique device name</param>
+    /// <returns>Monitor instance.</returns>
     public static IMonitor? CreateMonitor(MonitorType type, string deviceName)
     {
         return type switch
         {
             MonitorType.CpuClock => new CpuClockMonitor(deviceName),
             MonitorType.Temperature => new TemperatureMonitor(deviceName),
-            MonitorType.PowerConsuption => new PowerConsumptionMonitor(deviceName),
+            MonitorType.PowerConsumption => new PowerConsumptionMonitor(deviceName),
             _ => null
         };
     }
     
-    public static IClient? CreateDevice<T>() where T : Device
+    /// <summary>
+    /// Creates a device (MQTT client) with predefined monitors.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static IClient? CreateDevice(DeviceType deviceType)
     {
-        if (typeof(T) == typeof(PcDevice))
+        switch (deviceType)
+        {
+            case DeviceType.XiaomiWallSocket:
+                break;
+            case DeviceType.Pc:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null);
+        }
+
+        return deviceType switch
+        {
+            DeviceType.XiaomiWallSocket => CreateXiaomiDevice(),
+            DeviceType.Pc => CreatePc(),
+            _ => throw new ArgumentOutOfRangeException(nameof(deviceType), deviceType, null)
+        };
+        
+        IClient? CreatePc()
         {
             var clientId = $"Dell_{Guid.NewGuid()}";
-            var monitorBehaviour = new PublishBehaviour(clientId,MonitorType.CpuClock, MonitorType.PowerConsuption);
-            var device = new PcDevice(clientId, "localhost", monitorBehaviour);
-            return device;
-        }
-        else if (typeof(T) == typeof(XiaomiWallSocketDevice))
-        {
-            var clientId = $"Xiaomi{Guid.NewGuid()}";
-            var monitorBehaviour = new PublishBehaviour(clientId,MonitorType.Temperature, MonitorType.PowerConsuption);
-            var device = new XiaomiWallSocketDevice(clientId, "localhost", monitorBehaviour);
+            var monitorBehaviour = new PublishBehaviour(clientId,MonitorType.CpuClock, MonitorType.PowerConsumption);
+            var device = new Device(clientId, "localhost", monitorBehaviour);
             return device;
         }
 
-        return null;
+        IClient? CreateXiaomiDevice()
+        {
+            var clientId = $"Xiaomi{Guid.NewGuid()}";
+            var monitorBehaviour = new PublishBehaviour(clientId,MonitorType.Temperature, MonitorType.PowerConsumption);
+            var device = new Device(clientId, "localhost", monitorBehaviour);
+            return device;
+        }
     }
 }

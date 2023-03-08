@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Common;
+namespace Common.Extensions;
 
 public static class JsonExtension
 {

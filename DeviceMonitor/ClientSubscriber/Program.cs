@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Common;
+using Common.Extensions;
 using MQTTnet;
 using MQTTnet.Client;
 
@@ -9,8 +9,26 @@ namespace ClientSubscriber
     {
         private static readonly Dictionary<string, DeviceInformation> _devicesInfoDict = new();
         private static readonly object locking = new();
+        private static bool _detailed;
 
-        static async Task Main()
+        static async Task Main(string[] args)
+        {
+            ParseArguments(args);
+            await SetupMqttClient();
+
+            if (_detailed)
+            {
+                await Task.Run(UpdateConsoleDetailed);
+            }
+            else
+            {
+                await Task.Run(UpdateConsoleSummary);
+            }
+
+            Console.ReadLine();
+        }
+
+        private static async Task SetupMqttClient()
         {
             var mqttFactory = new MqttFactory();
             using var mqttClient = mqttFactory.CreateMqttClient();
@@ -20,33 +38,32 @@ namespace ClientSubscriber
                 .Build();
 
             var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
-                .WithTopicFilter(
-                    f => { f.WithTopic("monitor/+/+"); })
+                .WithTopicFilter(f => { f.WithTopic("monitor/+/+"); })
                 .Build();
-            
+
             mqttClient.ApplicationMessageReceivedAsync += MqttClientOnApplicationMessageReceivedAsync;
             await mqttClient.ConnectAsync(options);
             await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
-            
-            await Task.Run(UpdateConsole);
-            
-            Console.ReadLine();
+        }
+
+        private static void ParseArguments(string[] args)
+        {
+            _detailed = args.Contains("detail");
         }
 
         private static Task MqttClientOnApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
         {
-            if (!MqttExtension.ParseTopic(arg.ApplicationMessage.Topic, out var deviceName, out var monitorName)) 
+            if (!MqttExtensions.ParseTopic(arg.ApplicationMessage.Topic, out var deviceName, out var monitorName))
                 return Task.CompletedTask;
-            
+
             UpdateMeasurementCounters(deviceName, monitorName);
-            
+
             // Payload is not needed at this moment ... it's just a preparation for another usage.
             var payloadInBytes = arg.ApplicationMessage.Payload;
             String payload = Encoding.Default.GetString(payloadInBytes);
 
             return Task.CompletedTask;
         }
-        
 
         private static void UpdateMeasurementCounters(string deviceName, string monitorName)
         {
@@ -73,8 +90,8 @@ namespace ClientSubscriber
                 }
             }
         }
-        
-        private static async Task UpdateConsole()
+
+        private static async Task UpdateConsoleSummary()
         {
             while (true)
             {
@@ -85,18 +102,35 @@ namespace ClientSubscriber
                     Console.Clear();
                     lock (locking)
                     {
-                        foreach (var deviceInfo in _devicesInfoDict)
-                        {
-                            var value = deviceInfo.Value;
-                            foreach (var monitorInfo in value.MonitorsMeasurementDict)
-                            {
-                                var monitorValue = monitorInfo.Value;
-                                numberOfMonitorHit += monitorValue.Counter;
-                            }
-                        }
+                        var counter = _devicesInfoDict.SelectMany(p => p.Value.MonitorsMeasurementDict.Values)
+                            .Sum(p => p.Counter);
+                        Console.WriteLine($"Total measurement counters from subscriber startup: {counter}");
                     }
+                }
 
-                    Console.WriteLine($"Total measurement counters from subscriber startup: {numberOfMonitorHit}");
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
+        }
+
+        private static async Task UpdateConsoleDetailed()
+        {
+            while (true)
+            {
+                Console.Clear();
+                lock (locking)
+                {
+                    foreach (var deviceInfo in _devicesInfoDict)
+                    {
+                        Console.WriteLine($"Device: {deviceInfo.Value.DeviceName}");
+                        var value = deviceInfo.Value;
+                        foreach (var monitorInfo in value.MonitorsMeasurementDict)
+                        {
+                            Console.WriteLine(
+                                $"Monitor: {monitorInfo.Value.MonitorName} - events: {monitorInfo.Value.Counter}");
+                        }
+
+                        Console.WriteLine($"---------------------------------------------------------");
+                    }
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(3));

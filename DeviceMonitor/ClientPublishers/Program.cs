@@ -1,5 +1,4 @@
-﻿using ClientPublishers.Devices;
-using ClientPublishers.Factories;
+﻿using ClientPublishers.Factories;
 using ClientPublishers.Interfaces;
 
 namespace ClientPublishers
@@ -10,7 +9,6 @@ namespace ClientPublishers
         {
             var devices = CreateClients();
             await ConnectClients(devices);
-
             Console.ReadLine();
         }
 
@@ -25,9 +23,9 @@ namespace ClientPublishers
         private static List<IClient> CreateClients()
         {
             List<IClient> devices = new();
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < 2; i++)
             {
-                var xiaomi = Factory.CreateDevice<XiaomiWallSocketDevice>();
+                var xiaomi = Factory.CreateDevice(DeviceType.XiaomiWallSocket);
                 if (xiaomi is not null)
                     devices.Add(xiaomi);
             }

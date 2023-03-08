@@ -3,23 +3,29 @@ using MQTTnet.Internal;
 using MQTTnet.Packets;
 using MQTTnet.Server;
 
-namespace MqttBroker // Note: actual namespace depends on the project name.
+namespace MqttBroker
 {
     internal static class MqttServer
     {
         private static readonly Dictionary<string, ulong> _messagesDict = new();
         private static readonly object locking = new();
+        private static bool _debug;
 
-        static async Task Main()
+        static async Task Main(string[] args)
         {
-            await RunServer();
+            ParseArguments(args);
+            await StartServer();
         }
 
-        private static async Task RunServer()
+        private static void ParseArguments(string[] args)
         {
-           
-            // var mqttFactory = new MqttFactory(new ConsoleLogger());
-            var mqttFactory = new MqttFactory();
+            _debug = args.Contains("debug");
+        }
+
+        private static async Task StartServer()
+        {
+            var mqttFactory = _debug ? new MqttFactory(new ConsoleLogger()) : new MqttFactory();
+
             var mqttServerOptions = new MqttServerOptionsBuilder()
                 .WithDefaultEndpoint()
                 .Build();
@@ -27,12 +33,15 @@ namespace MqttBroker // Note: actual namespace depends on the project name.
             using var mqttServer = mqttFactory.CreateMqttServer(mqttServerOptions);
             mqttServer.InterceptingInboundPacketAsync += InboundPacket;
             await mqttServer.StartAsync();
-            
-            await Task.Run(UpdateConsole);
+
+            if (!_debug)
+            {
+                await Task.Run(UpdateConsole);
+            }
+
             Console.WriteLine("Press Enter to exit.");
             Console.ReadLine();
 
-            // Stop and dispose the MQTT server if it is no longer needed!
             await mqttServer.StopAsync();
         }
 
@@ -53,6 +62,7 @@ namespace MqttBroker // Note: actual namespace depends on the project name.
                     Console.WriteLine($"Total monitors count: {_messagesDict.Count}");
                     Console.WriteLine($"Total events received: {eventsRceived}");
                 }
+
                 await Task.Delay(TimeSpan.FromSeconds(3));
             }
         }
@@ -84,7 +94,6 @@ namespace MqttBroker // Note: actual namespace depends on the project name.
                     _messagesDict[dictKey] = 1;
                 }
             }
-
             return CompletedTask.Instance;
         }
     }
