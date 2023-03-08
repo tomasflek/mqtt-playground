@@ -9,7 +9,7 @@ public abstract class Monitor : IMonitor
     public delegate void MeasureUpdateHandler(MeasureEventArgs e);
 
     public delegate Task AsyncEventHandler<in TMeasureEventArgs>(TMeasureEventArgs e);
-    public event AsyncEventHandler<MeasureEventArgs> OnMeasured;
+    public event AsyncEventHandler<MeasureEventArgs>? OnMeasured;
     
 
     protected Monitor(Func<string?>? measurementFunction, int measurementInterval)

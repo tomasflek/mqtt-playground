@@ -11,7 +11,7 @@ public static class MonitorFactory
         {
             MonitorType.CpuClock => new CpuClockMonitor(),
             MonitorType.Temperature => new TemperatureMonitor(),
-            MonitorType.PowerConsuption => new PowerConsuptionMonitor(),
+            MonitorType.PowerConsuption => new PowerConsumptionMonitor(),
             _ => null
         };
     }

@@ -32,7 +32,8 @@ public sealed class CpuClockMonitor : Monitor
                 Unit = unit
             };
             
-            return frequency.SerializeToJson();
+            return dto.SerializeToJson();
+            
         }
         catch (Exception e)
         {

@@ -1,16 +1,16 @@
 namespace ClientPublishers.Monitors;
 
-public sealed class PowerConsuptionMonitor : Monitor
+public sealed class PowerConsumptionMonitor : Monitor
 {
     #region Properties
 
-    protected override string Topic => $"monitor/{typeof(PowerConsuptionMonitor)}";
+    protected override string Topic => $"monitor/{typeof(PowerConsumptionMonitor)}";
 
     #endregion
 
     #region Constructor
 
-    public PowerConsuptionMonitor() : base(PerformReadingAsync, 30) { }
+    public PowerConsumptionMonitor() : base(PerformReadingAsync, 30) { }
     #endregion
 
     #region Public methods
