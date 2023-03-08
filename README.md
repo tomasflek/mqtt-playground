@@ -33,3 +33,7 @@ In order to restore nuget packages, execute command `dotnet restore`.
 1. Run `MqttBroker.exe` Console will display counter measurement for received messages. In order to debug the communication run `MqttBroker.exe debug`.
 2. Run `ClientPublishers.exe x`, where x is the number of devices (clients) which will be automatically created. 
 3. Optionaly: Run `ClientSubscriber.exe` or `ClientSubscriber.exe detail` if you want to see more information about devices and monitors.
+
+# What is not covered yet
+- payload is serialized into json, transfered, but not read
+- only very basic unit tests are covered, some integration tests are missing due to lack of time
