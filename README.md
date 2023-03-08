@@ -31,5 +31,5 @@ In order to buid the solution .NET 6 DEV must be installed. The projects are usi
 # How to runt it
 1. Make sure that all projects are successfully built.
 2. Run `MqttBroker.exe`
-3. Run `ClientPublishers.exe`
-4. Optionaly: run `ClientSubscriber.exe`
+3. Run `ClientPublishers.exe`. Console will display counter measurement. In order to debug the communication run `ClientPublishers.exe debug`.
+4. Optionaly: run `ClientSubscriber.exe` or `ClientSubscriber.exe detail` if you want to see more information about devices and monitors.
