@@ -5,8 +5,11 @@ namespace ClientPublishers
 {
     internal static class Program
     {
-        static async Task Main()
+        private static int _numberOfDevices;
+
+        static async Task Main(string[] args)
         {
+            _numberOfDevices = int.Parse(args[0]);
             var devices = CreateClients();
             await ConnectClients(devices);
             Console.ReadLine();
@@ -23,24 +26,12 @@ namespace ClientPublishers
         private static List<IClient> CreateClients()
         {
             List<IClient> devices = new();
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _numberOfDevices; i++)
             {
                 var xiaomi = Factory.CreateDevice(DeviceType.XiaomiWallSocket);
                 if (xiaomi is not null)
                     devices.Add(xiaomi);
             }
-            
-            // var pc = Factory.CreateDevice<PcDevice>();
-            // if (pc is not null)
-            //     devices.Add(pc);
-            //
-            // pc = Factory.CreateDevice<PcDevice>();
-            // if (pc is not null)
-            //     devices.Add(pc);
-            //
-            // pc = Factory.CreateDevice<PcDevice>();
-            // if (pc is not null)
-            //     devices.Add(pc);
 
             return devices;
         }

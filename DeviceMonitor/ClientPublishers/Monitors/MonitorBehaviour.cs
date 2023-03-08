@@ -1,12 +1,12 @@
 using ClientPublishers.Events;
 using ClientPublishers.Interfaces;
 
-namespace ClientPublishers.Devices;
+namespace ClientPublishers.Monitors;
 
 /// <summary>
 /// Behaviour class which gathers a measurement data from all monitors and published the information to subscribers.
 /// </summary>
-public sealed class PublishBehaviour : IPublishBehaviour
+public sealed class PublishMeasurement : IPublishMesurement
 {
     #region Events
 
@@ -24,7 +24,7 @@ public sealed class PublishBehaviour : IPublishBehaviour
 
     #region Constructor
 
-    public PublishBehaviour(string deviceName, params MonitorType[] monitors)
+    public PublishMeasurement(string deviceName, params MonitorType[] monitors)
     {
         foreach (var monitorType in monitors)
         {

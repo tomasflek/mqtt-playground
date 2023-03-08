@@ -5,7 +5,7 @@ using MQTTnet.Server;
 
 namespace MqttBroker
 {
-    internal static class MqttServer
+    internal static class Program
     {
         private static readonly Dictionary<string, ulong> _messagesDict = new();
         private static readonly object locking = new();
@@ -52,15 +52,15 @@ namespace MqttBroker
                 Console.Clear();
                 lock (locking)
                 {
-                    ulong eventsRceived = 0;
+                    ulong numberOfEvents = 0;
                     foreach (var message in _messagesDict)
                     {
-                        eventsRceived += message.Value;
+                        numberOfEvents += message.Value;
                         Console.WriteLine($"{message.Key} - {message.Value}");
                     }
-
+                    
                     Console.WriteLine($"Total monitors count: {_messagesDict.Count}");
-                    Console.WriteLine($"Total events received: {eventsRceived}");
+                    Console.WriteLine($"Total events received: {numberOfEvents}");
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(3));

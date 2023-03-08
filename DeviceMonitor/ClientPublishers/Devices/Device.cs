@@ -19,14 +19,14 @@ public sealed class Device : IClient, IDisposable
 
 	#region Properties
 	
-	private readonly IPublishBehaviour _publishBehaviour;
+	private readonly IPublishMesurement _publishMesurement;
 	public string ClientName { get; }
 
 	#endregion
 
 	#region Constructor
 
-	public Device(string clientId, string serverAddress, IPublishBehaviour publishBehaviour)
+	public Device(string clientId, string serverAddress, IPublishMesurement publishMesurement)
 	{
 		ClientName = clientId;
 		
@@ -37,8 +37,8 @@ public sealed class Device : IClient, IDisposable
 			.WithClientId(clientId)
 			.Build();
 		
-		_publishBehaviour = publishBehaviour;
-		_publishBehaviour.OnMeasured += OnPublish;
+		_publishMesurement = publishMesurement;
+		_publishMesurement.OnMeasured += OnPublish;
 	}
 	#endregion
 	
@@ -50,7 +50,7 @@ public sealed class Device : IClient, IDisposable
 	public async Task ConnectAsync()
 	{
 		await _mqttClient.ConnectAsync(_mqttClientOptions, CancellationToken.None);
-		_publishBehaviour.OnConnect();
+		_publishMesurement.OnConnect();
 	}
 
 	/// <summary>
@@ -59,7 +59,7 @@ public sealed class Device : IClient, IDisposable
 	public async Task DisconnectAsync()
 	{
 		await _mqttClient.DisconnectAsync();
-		_publishBehaviour.OnDisconnect();
+		_publishMesurement.OnDisconnect();
 	}
 
 	/// <summary>

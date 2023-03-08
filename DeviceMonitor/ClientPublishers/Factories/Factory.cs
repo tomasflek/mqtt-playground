@@ -42,7 +42,7 @@ public static class Factory
         IClient? CreatePc()
         {
             var clientId = $"Dell_{Guid.NewGuid()}";
-            var monitorBehaviour = new PublishBehaviour(clientId,MonitorType.CpuClock, MonitorType.PowerConsumption);
+            var monitorBehaviour = new PublishMeasurement(clientId,MonitorType.CpuClock, MonitorType.PowerConsumption);
             var device = new Device(clientId, "localhost", monitorBehaviour);
             return device;
         }
@@ -50,7 +50,7 @@ public static class Factory
         IClient? CreateXiaomiDevice()
         {
             var clientId = $"Xiaomi{Guid.NewGuid()}";
-            var monitorBehaviour = new PublishBehaviour(clientId,MonitorType.Temperature, MonitorType.PowerConsumption);
+            var monitorBehaviour = new PublishMeasurement(clientId,MonitorType.Temperature, MonitorType.PowerConsumption);
             var device = new Device(clientId, "localhost", monitorBehaviour);
             return device;
         }
