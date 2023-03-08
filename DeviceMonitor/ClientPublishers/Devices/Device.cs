@@ -1,17 +1,9 @@
 ﻿using ClientPublishers.Events;
-using ClientPublishers.Factories;
 using ClientPublishers.Interfaces;
 using MQTTnet;
 using MQTTnet.Client;
 
 namespace ClientPublishers.Devices;
-
-public interface IPublishBehaviour
-{
-	void OnConnect();
-	void OnDisconnect();
-	event PublishBehaviour.AsyncEventHandler<MeasureEventArgs>? OnMeasured;
-}
 
 public abstract class Device : IClient, IDisposable
 {

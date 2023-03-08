@@ -1,3 +1,5 @@
+using ClientPublishers.Interfaces;
+
 namespace ClientPublishers.Devices;
 
 public sealed class XiaomiWallSocketDevice : Device

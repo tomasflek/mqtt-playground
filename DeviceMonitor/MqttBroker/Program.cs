@@ -43,14 +43,16 @@ namespace MqttBroker // Note: actual namespace depends on the project name.
                 Console.Clear();
                 lock (locking)
                 {
+                    ulong eventsRceived = 0;
                     foreach (var message in _messagesDict)
                     {
+                        eventsRceived += message.Value;
                         Console.WriteLine($"{message.Key} - {message.Value}");
                     }
 
-                    Console.WriteLine($"Total count: {_messagesDict.Count}");
+                    Console.WriteLine($"Total monitors count: {_messagesDict.Count}");
+                    Console.WriteLine($"Total events received: {eventsRceived}");
                 }
-
                 await Task.Delay(TimeSpan.FromSeconds(3));
             }
         }
