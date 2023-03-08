@@ -28,9 +28,11 @@ In order to build the solution .NET 6 DEV must be installed. The projects are us
 In order to restore nuget packages, execute the command `dotnet restore`.
 
 # How to run it
+Run all application on the same computer - by default the `localhost` is used as a server address.
 1. Run `MqttBroker.exe` Console will display counter measurements for received messages. In order to debug the communication run `MqttBroker.exe debug`.
 2. Run `ClientPublishers.exe x`, where x is the number of devices (clients) that will be automatically created. 
 3. Optionally: Run `ClientSubscriber.exe` or `ClientSubscriber.exe detail` if you want to see more information about devices and monitors.
+4. Optionally: Run [MQTT explorer](http://mqtt-explorer.com/).
 
 # What is not yet covered
 - payload is serialized into json, transferred, but not read
