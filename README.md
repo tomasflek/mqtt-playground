@@ -35,6 +35,7 @@ Run all application on the same computer - by default the `localhost` is used as
 4. Optionally: Run [MQTT explorer](http://mqtt-explorer.com/).
 
 # What is not yet covered and what could be improved
-- payload is serialized into json, transferred, but not read
-- only very basic unit tests are covered, some integration tests are missing due to lack of time
-- improve with IoC and DI for example to decide whether to log a messages into the console or into a file - Serilog, Log4Net, etc ...
+- Payload is serialized into json, transferred, but not read.
+- Only very basic unit tests are covered, some integration tests are missing due to lack of time.
+- Improve with IoC and DI for example to decide whether to log a messages into the console or into a file - Serilog, Log4Net, etc ...
+- Currently the ClientSubscriber is calculating received images after it starts. It could have been enhanced by asking Broker about number of received messages for fat (Broke is internally counting all messages already).
